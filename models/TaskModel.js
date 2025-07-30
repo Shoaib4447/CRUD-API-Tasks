@@ -9,10 +9,10 @@ const TaskSchema = new mongoose.Schema(
       minlength: 3,
       maxlength: 30,
     },
-    dateInitiated: { type: Date, default: Date.now },
-    dueDate: Date,
+    dateInitiated: { type: Date, trim: true },
+    dueDate: { type: Date, trim: true },
     assignedTo: { type: String, trim: true },
-    priority: { type: String, enum: ["low", "medium", "high"] },
+    priority: { type: String, enum: ["Low", "Medium", "High"] },
     assignStatus: { type: String, enum: ["To Do", "In Progress", "Done"] },
     actionItems: { type: String, trim: true, maxlength: 100 },
     materials: [
