@@ -13,7 +13,7 @@ const allowedOrigins = [
   "https://fluent-ui-task-creation.vercel.app/",
   "http://localhost:5173",
 ];
-app.use(cors({ origin: allowedOrigins }));
+app.use(cors({ origin: "*" }));
 // Routes
 app.use("https://crud-api-tasks.vercel.app/api/tasks", taskRouter);
 
