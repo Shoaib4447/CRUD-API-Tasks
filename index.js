@@ -12,7 +12,7 @@ app.use(express.json());
 const allowedOrigins = ["http://localhost:5173"];
 app.use(cors({ origin: "https://fluent-ui-task-creation.vercel.app" }));
 // Routes
-app.use("https://crud-api-tasks.vercel.app/api/tasks", taskRouter);
+app.use("/api/tasks", taskRouter);
 
 // DB connection
 connectDDB();
