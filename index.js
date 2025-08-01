@@ -15,7 +15,7 @@ const allowedOrigins = [
 ];
 app.use(cors({ origin: allowedOrigins }));
 // Routes
-app.use("/api/tasks", taskRouter);
+app.use("https://crud-api-tasks.vercel.app/api/tasks", taskRouter);
 
 // DB connection
 connectDDB();
