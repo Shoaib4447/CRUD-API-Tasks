@@ -5,6 +5,7 @@ import {
   getSingleTask,
   updateTask,
   deleteTask,
+  searchTaskbyTitleAndStatus,
 } from "../controllers/taskController.js";
 
 const router = express.Router();
@@ -14,6 +15,9 @@ router.post("/", createTask);
 
 // GET All tasks(read task)
 router.get("/", getAllTasks);
+
+// GET filtered Tasks by title and status
+router.get("/search", searchTaskbyTitleAndStatus);
 
 // GET Task by id(read single task)
 router.get("/:id", getSingleTask);

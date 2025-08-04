@@ -44,7 +44,7 @@ export const getAllTasks = async (req, res) => {
     // get page no
     const page = parseInt(req.query.page) || 1;
     // get limit
-    const limit = 10; //parseInt(req.query.limit) ||
+    const limit = parseInt(req.query.limit) || 10;
     //documets to be skipped
     const skip = (page - 1) * 10;
 
@@ -114,5 +114,27 @@ export const deleteTask = async (req, res) => {
     res.status(200).json({ message: "Task deleted", id: id });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Search a task by title && status
+// route    GET /api/tasks/search?title=...&status=...
+export const searchTaskbyTitleAndStatus = async (req, res) => {
+  try {
+    const { title, status } = req.query;
+    let query = {};
+
+    if (title) query.taskName = { $regex: title, $options: "i" };
+    if (status) query.assignStatus = status;
+
+    const filteredTask = await Task.find(query);
+    if (!filteredTask.length) {
+      res.status(404).json({ message: "No matching tasks found" });
+    }
+
+    return res.status(200).json({ tasks: filteredTask });
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).json({ message: "Server Error", error });
   }
 };
