@@ -10,7 +10,7 @@ const JWT_SECRET = process.env.SECRET_KEY;
 // route    POST /api/users
 export const registerUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { firstname, lastname, username, email, password } = req.body;
     // check if user already exist
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -21,6 +21,8 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     // if not found then create 201
     const newUser = await User.create({
+      firstname,
+      lastname,
       username,
       email,
       password: hashedPassword,
@@ -42,8 +44,12 @@ export const registerUser = async (req, res) => {
       },
       token: token,
     });
+    console.log("User Created=>", newUser);
   } catch (error) {
     console.log("Server Error", error);
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+// @desc    login a USER / verify
+// route    GET /api/users
