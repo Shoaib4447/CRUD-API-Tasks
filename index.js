@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDDB from "./config/db.js";
 import taskRouter from "./routes/taskRoutes.js";
+import userRouter from "./routes/userRoutes.js";
 import cors from "cors";
 
 dotenv.config();
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(cors());
 // Routes
 app.use("/api/tasks", taskRouter);
+app.use("/api/auth", userRouter); //=> login/register
 
 // DB connection
 connectDDB();
