@@ -7,9 +7,11 @@ import {
   deleteTask,
   searchTaskbyTitleAndStatus,
 } from "../controllers/taskController.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+router.use(authMiddleware);
 // POST a task (create)
 router.post("/", createTask);
 

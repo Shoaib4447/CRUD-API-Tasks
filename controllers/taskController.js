@@ -4,6 +4,7 @@ import Task from "../models/TaskModel.js";
 // route    POST /api/tasks
 export const createTask = async (req, res) => {
   try {
+    const userId = req.user.id;
     // get data from body
     const {
       taskName,
@@ -27,6 +28,7 @@ export const createTask = async (req, res) => {
       actionItems,
       materials,
       description,
+      createdBy: userId, //User ID
     });
 
     // Save new Task
@@ -41,6 +43,7 @@ export const createTask = async (req, res) => {
 // route    GET /api/tasks
 export const getAllTasks = async (req, res) => {
   try {
+    const userId = req.user.id; // current user's ID from token
     // get page no
     const page = parseInt(req.query.page) || 1;
     // get limit
@@ -50,9 +53,11 @@ export const getAllTasks = async (req, res) => {
 
     // count all documents in collection
     const totalTasks = await Task.countDocuments();
-    const tasks = await Task.find().skip(skip).limit(limit);
+    const tasks = await Task.find({ createdBy: userId })
+      .skip(skip)
+      .limit(limit);
 
-    const allTasks = await Task.find();
+    // const allTasks = await Task.find();
     res.status(200).json({
       page,
       limit,

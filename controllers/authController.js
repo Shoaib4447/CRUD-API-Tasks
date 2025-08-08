@@ -7,7 +7,7 @@ dotenv.config();
 const JWT_SECRET = process.env.SECRET_KEY;
 
 // @desc    register a USER / create
-// route    POST /api/users
+// route    POST /api/auth/register
 export const registerUser = async (req, res) => {
   try {
     const { firstname, lastname, username, email, password } = req.body;
@@ -28,13 +28,6 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
     });
 
-    // Sign the user info with jwt token (Generate token)
-    const tokenPayload = {
-      id: newUser._id,
-      email: newUser.email,
-    };
-
-    const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: "1d" });
     res.status(201).json({
       message: "User created successfully",
       user: {
@@ -42,7 +35,6 @@ export const registerUser = async (req, res) => {
         name: newUser.username,
         email: newUser.email,
       },
-      token: token,
     });
     console.log("User Created=>", newUser);
   } catch (error) {
@@ -51,5 +43,41 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// @desc    login a USER / verify
-// route    GET /api/users
+// @desc    login  user
+// route    GET /api/auth/login
+export const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email or password missing" });
+    }
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "User not found" });
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(401).json({ message: "Invalid Credentials" });
+
+    // token payload
+    const tokenPayload = {
+      id: user._id,
+      email: user.email,
+    };
+    // sign token
+    const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: "1d" });
+
+    res.status(200).json({
+      message: "Logged in Successfully",
+      user: {
+        id: user._id,
+        name: user.username,
+        email: user.email,
+      },
+      token,
+    });
+  } catch (error) {
+    console.log("login controller server error 500=>", error);
+    res.status(500).json({ message: "server error" });
+  }
+};
