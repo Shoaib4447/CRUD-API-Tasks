@@ -52,12 +52,11 @@ export const getAllTasks = async (req, res) => {
     const skip = (page - 1) * 10;
 
     // count all documents in collection
-    const totalTasks = await Task.countDocuments();
+    const totalTasks = await Task.countDocuments({ createdBy: userId });
     const tasks = await Task.find({ createdBy: userId })
       .skip(skip)
       .limit(limit);
 
-    // const allTasks = await Task.find();
     res.status(200).json({
       page,
       limit,
@@ -67,6 +66,28 @@ export const getAllTasks = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Search a task by title && status
+// route    GET /api/tasks/search?title=...&status=...
+export const searchTaskbyTitleAndStatus = async (req, res) => {
+  try {
+    const { title, status } = req.query;
+    let query = {};
+
+    if (title) query.taskName = { $regex: title, $options: "i" };
+    if (status) query.assignStatus = status;
+
+    const filteredTask = await Task.find(query);
+    if (!filteredTask.length) {
+      res.status(404).json({ message: "No matching tasks found" });
+    }
+
+    return res.status(200).json({ tasks: filteredTask });
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).json({ message: "Server Error", error });
   }
 };
 
@@ -119,27 +140,5 @@ export const deleteTask = async (req, res) => {
     res.status(200).json({ message: "Task deleted", id: id });
   } catch (error) {
     res.status(500).json({ message: error.message });
-  }
-};
-
-// @desc    Search a task by title && status
-// route    GET /api/tasks/search?title=...&status=...
-export const searchTaskbyTitleAndStatus = async (req, res) => {
-  try {
-    const { title, status } = req.query;
-    let query = {};
-
-    if (title) query.taskName = { $regex: title, $options: "i" };
-    if (status) query.assignStatus = status;
-
-    const filteredTask = await Task.find(query);
-    if (!filteredTask.length) {
-      res.status(404).json({ message: "No matching tasks found" });
-    }
-
-    return res.status(200).json({ tasks: filteredTask });
-  } catch (error) {
-    console.error("Search error:", error);
-    res.status(500).json({ message: "Server Error", error });
   }
 };

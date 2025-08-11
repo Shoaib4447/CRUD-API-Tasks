@@ -11,7 +11,8 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.use(authMiddleware);
+router.use(authMiddleware); // applied to all below routes
+
 // POST a task (create)
 router.post("/", createTask);
 
